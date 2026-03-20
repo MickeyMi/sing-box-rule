@@ -1,7 +1,6 @@
 FROM alpine/openclaw:2026.3.13-1
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
-
 USER root
 
 ARG DEBIAN_FRONTEND=noninteractive
@@ -10,47 +9,35 @@ ARG GO_VERSION=1.26.1
 ARG NODE_MAJOR=24
 ARG NPM_VERSION=11.12.0
 
-ENV PATH="/usr/local/go/bin:/usr/local/node/bin:${PATH}"
+# 所有可变数据统一放到 /data
+ENV APP_DATA=/data
+ENV GOPATH=/data/go
+ENV GOBIN=/data/bin
+ENV NPM_CONFIG_PREFIX=/data/npm-global
+ENV PIP_ROOT_USER_ACTION=ignore
+ENV PYTHONUSERBASE=/data/python
+ENV PATH="/data/bin:/data/npm-global/bin:/data/python/bin:/usr/local/go/bin:/usr/local/node/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 
-# 删除旧版本并安装基础依赖
+RUN mkdir -p \
+    /data/bin \
+    /data/go \
+    /data/npm-global \
+    /data/python \
+    /data/cache \
+    /data/openclaw \
+    /data/home
+
 RUN set -eux; \
     apt-get update; \
-    apt-get remove -y python3 python3-pip nodejs npm golang golang-go || true; \
     apt-get install -y --no-install-recommends \
-        ca-certificates \
-        curl \
-        wget \
-        git \
-        bash \
-        xz-utils \
-        unzip \
-        tar \
-        build-essential \
-        pkg-config \
-        libssl-dev \
-        zlib1g-dev \
-        libbz2-dev \
-        libreadline-dev \
-        libsqlite3-dev \
-        libffi-dev \
-        libncursesw5-dev \
-        libgdbm-dev \
-        liblzma-dev \
-        tk-dev \
-        uuid-dev; \
-    rm -rf \
-        /usr/local/go \
-        /usr/local/node \
-        /usr/local/bin/python \
-        /usr/local/bin/python3 \
-        /usr/local/bin/pip \
-        /usr/local/bin/pip3 \
-        /usr/local/lib/python* \
-        /root/.npm \
-        /tmp/*; \
+        ca-certificates curl wget git bash xz-utils unzip tar \
+        build-essential pkg-config \
+        libssl-dev zlib1g-dev libbz2-dev libreadline-dev \
+        libsqlite3-dev libffi-dev libncursesw5-dev libgdbm-dev \
+        liblzma-dev tk-dev uuid-dev; \
     rm -rf /var/lib/apt/lists/*
 
-# 安装 Python
+# Python
 RUN set -eux; \
     cd /tmp; \
     wget -O Python.tgz "https://www.python.org/ftp/python/${PYTHON_VERSION}/Python-${PYTHON_VERSION}.tgz"; \
@@ -65,10 +52,9 @@ RUN set -eux; \
     ln -sf "/usr/local/bin/pip${PY_SHORT}" /usr/local/bin/pip3; \
     ln -sf "/usr/local/bin/pip${PY_SHORT}" /usr/local/bin/pip; \
     python3 -m pip install --no-cache-dir --upgrade pip setuptools wheel; \
-    cd /; \
-    rm -rf /tmp/Python* /tmp/*
+    rm -rf /tmp/*
 
-# 安装 Go
+# Go
 RUN set -eux; \
     ARCH="$(dpkg --print-architecture)"; \
     case "${ARCH}" in \
@@ -81,10 +67,9 @@ RUN set -eux; \
     tar -C /usr/local -xzf go.tgz; \
     ln -sf /usr/local/go/bin/go /usr/local/bin/go; \
     ln -sf /usr/local/go/bin/gofmt /usr/local/bin/gofmt; \
-    rm -f /tmp/go.tgz; \
-    go version
+    rm -f /tmp/go.tgz
 
-# 安装 Node.js 和 npm
+# Node.js + npm
 RUN set -eux; \
     ARCH="$(dpkg --print-architecture)"; \
     case "${ARCH}" in \
@@ -101,13 +86,8 @@ RUN set -eux; \
     ln -sf /usr/local/node/bin/npm /usr/local/bin/npm; \
     ln -sf /usr/local/node/bin/npx /usr/local/bin/npx; \
     npm install -g "npm@${NPM_VERSION}"; \
-    rm -f /tmp/node.tar.xz; \
-    node --version; \
-    npm --version
+    rm -f /tmp/node.tar.xz
 
-RUN set -eux; \
-    python3 --version; \
-    pip3 --version; \
-    go version; \
-    node --version; \
-    npm --version
+# 给运行时一个固定 HOME，避免东西写回镜像层
+ENV HOME=/data/home
+WORKDIR /app
