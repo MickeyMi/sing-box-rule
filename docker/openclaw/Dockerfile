@@ -1,4 +1,4 @@
-FROM alpine/openclaw:2026.3.13-1
+FROM ghcr.io/openclaw/openclaw:main
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 USER root
