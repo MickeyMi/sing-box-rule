@@ -3,21 +3,29 @@ FROM ghcr.io/openclaw/openclaw:main
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 USER root
 
+ARG DEBIAN_FRONTEND=noninteractive
 ARG PYTHON_VERSION=3.14.3
 ARG GO_VERSION=1.26.1
 ARG NODE_MAJOR=24
 ARG NPM_VERSION=11.12.0
 
+# 所有可变数据统一放到 /data
 ENV APP_DATA=/data
 ENV HOME=/data/home
 ENV TMPDIR=/data/tmp
+
 ENV GOPATH=/data/go
 ENV GOBIN=/data/bin
+
 ENV NPM_CONFIG_PREFIX=/data/npm-global
 ENV NPM_CONFIG_CACHE=/data/npm-cache
+
 ENV PYTHONUSERBASE=/data/python
+ENV PIP_ROOT_USER_ACTION=ignore
 ENV PIP_CACHE_DIR=/data/pip-cache
-ENV PATH="/data/bin:/data/npm-global/bin:/data/python/bin:/usr/local/go/bin:/usr/local/node/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+
+# 不把 /usr/local/node/bin 放进 PATH，避免命中 Node 自带的 npm 11.9.0
+ENV PATH="/data/bin:/data/npm-global/bin:/data/python/bin:/usr/local/go/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 
 RUN mkdir -p \
     /data/bin \
@@ -32,9 +40,6 @@ RUN mkdir -p \
     /data/tmp \
     /data/logs \
     /home/node
-
-RUN rm -rf /home/node/.openclaw \
-    && ln -s /data/openclaw /home/node/.openclaw
 
 RUN set -eux; \
     apt-get update; \
@@ -92,12 +97,23 @@ RUN set -eux; \
     mkdir -p /usr/local/node; \
     tar -xJf node.tar.xz -C /usr/local/node --strip-components=1; \
     ln -sf /usr/local/node/bin/node /usr/local/bin/node; \
-    rm -f /usr/local/bin/npm /usr/local/bin/npx; \
-    npm install -g "npm@${NPM_VERSION}"; \
+    mkdir -p /data/npm-global /data/npm-cache; \
+    /usr/local/node/bin/npm install -g "npm@${NPM_VERSION}" --prefix /data/npm-global; \
     ln -sf /data/npm-global/bin/npm /usr/local/bin/npm; \
     ln -sf /data/npm-global/bin/npx /usr/local/bin/npx; \
     npm -v; \
+    npx -v; \
     rm -f /tmp/node.tar.xz
 
+# 可选：验证最终路径
+RUN set -eux; \
+    echo "node => $(which node)"; \
+    echo "npm  => $(which npm)"; \
+    echo "npx  => $(which npx)"; \
+    node -v; \
+    npm -v; \
+    npx -v
+
+ENV OPENCLAW_TMP_DIR=/data/tmp
 WORKDIR /app
 VOLUME ["/data"]
