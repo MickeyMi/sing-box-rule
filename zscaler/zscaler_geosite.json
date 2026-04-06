@@ -3,24 +3,24 @@
   "rules": [
     {
       "domain_suffix": [
-        ".zpath.net",
-        ".zscaler.net",
-        ".zscalerone.net",
-        ".zscalertwo.net",
-        ".zscalerthree.net",
-        ".zscloud.net",
-        ".zscalerbeta.net",
-        ".zscalergov.net",
-        ".zscalerten.net",
-        ".private.zscaler.com",
-        ".zpagov.net",
-        ".zscaler.com",
-        ".zscaler.de",
-        ".zscaler.fr",
-        ".zscaler.jp",
-        ".zdxcloud.net",
-        ".zdxgov.net",
-        ".zdxbeta.net"
+        "zpath.net",
+        "zscaler.net",
+        "zscalerone.net",
+        "zscalertwo.net",
+        "zscalerthree.net",
+        "zscloud.net",
+        "zscalerbeta.net",
+        "zscalergov.net",
+        "zscalerten.net",
+        "private.zscaler.com",
+        "zpagov.net",
+        "zscaler.com",
+        "zscaler.de",
+        "zscaler.fr",
+        "zscaler.jp",
+        "zdxcloud.net",
+        "zdxgov.net",
+        "zdxbeta.net"
       ]
     }
   ]
