@@ -12,9 +12,9 @@ curl -L -o ./tmp/tencent_geosite.json "https://raw.githubusercontent.com/MetaCub
 cp ../direct_custom.json ./tmp
 
 ./sing-box rule-set merge merged.json -C ./tmp/
-./sing-box rule-set compile merged.json -o in_china.srs
+./sing-box rule-set compile merged.json -o ../gen/in_china_direct.srs
 
-./sing-box rule-set compile ../cloudflare/cloudflare_one_geoip.json -o cloudflare_one_geoip.srs
+./sing-box rule-set compile ../cloudflare/cloudflare_one_geoip.json -o ../cloudflare/cloudflare_one_geoip.srs
 
 
 
