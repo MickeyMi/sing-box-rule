@@ -10,6 +10,8 @@ curl -L -o ./tmp/tencent_geosite.json "https://raw.githubusercontent.com/MetaCub
 
 
 cp ../direct_custom.json ./tmp
+cp ../zscaler/zscaler_geoip.json ./tmp
+cp ../zscaler/zscaler_geosite.json ./tmp
 
 ./sing-box rule-set merge merged.json -C ./tmp/
 ./sing-box rule-set compile merged.json -o ../gen/in_china_direct.srs
