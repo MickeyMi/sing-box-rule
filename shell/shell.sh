@@ -3,10 +3,13 @@ mkdir -p ./tmp
 curl -L -o ./tmp/cn_geosite.json "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/cn.json"
 curl -L -o ./tmp/cn_geoip.json "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geoip/cn.json"
 
-
-curl -L -o ./tmp/douyin_geosite.json "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/douyin.json"
-curl -L -o ./tmp/tiktok_geosite.json "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/tiktok.json"
-curl -L -o ./tmp/tencent_geosite.json "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/tencent.json"
+curl -L --output-dir ./tmp -O "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/tencent.json"
+curl -L --output-dir ./tmp -O "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/alibaba.json"
+curl -L --output-dir ./tmp -O "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/aliyun.json"
+curl -L --output-dir ./tmp -O "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/bilibili.json"
+curl -L --output-dir ./tmp -O "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/bilibili2.json"
+curl -L --output-dir ./tmp -O "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/douyin.json"
+curl -L --output-dir ./tmp -O "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/sing/geo/geosite/tiktok.json"
 
 
 cp ../direct_custom.json ./tmp
