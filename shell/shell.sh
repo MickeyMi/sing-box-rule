@@ -17,6 +17,7 @@ cp ../zscaler/zscaler_geosite.json ./tmp
 ./sing-box rule-set merge merged.json -C ./tmp/
 ./sing-box rule-set compile merged.json -o ../gen/in_china_direct.srs
 
+#Other
 ./sing-box rule-set compile ../cloudflare/cloudflare_one_geoip.json -o ../cloudflare/cloudflare_one_geoip.srs
 ./sing-box rule-set compile ../zscaler/zscaler_geoip.json -o ../zscaler/zscaler_geoip.srs
 ./sing-box rule-set compile ../zscaler/zscaler_geosite.json -o ../zscaler/zscaler_geosite.srs
